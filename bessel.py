@@ -1,4 +1,5 @@
 import scipy.special
+import math
 
 factorialList = [1]
 
@@ -42,6 +43,21 @@ def dynamicBessel(x,N):
     correctiveFactor = sum(lambdaArray)
     return J[0] / correctiveFactor
 
-print(truncatedBessel(1.0,20))
-print(dynamicBessel(1.0,20))
-print(scipy.special.jv(0,1.0))
+def  relErr(x, n, callback):
+    """ Returns the relative error for the calculation of the
+        Bessel function of order zero at the point x using the function passed
+        as the callback. """
+    correctValue = scipy.special.jv(0,x)
+    estimate = callback(x,n)
+    return abs(correctValue - estimate)/abs(estimate)
+
+def prettyErrorTable(xVals, nVals, method):
+    text = "x\tN| " + " | ".join([str(n) for n in nVals]) + "\n"
+    text += "==" * len(text) + "\n"
+    for x in xVals:
+        text += str(x) + " \t | " + " | ".join([str(relErr(x,n,method)) for n in nVals]) + "\n"
+    return text
+print("Table of relative errors for the truncated Bessel function:")
+print(prettyErrorTable([1,5,10,20], [10,25,50,75,100], truncatedBessel))
+print("Table of relative errors for the recursive Bessel function:")
+print(prettyErrorTable([1,5,10,20], [10,25,50,75,100], dynamicBessel))
