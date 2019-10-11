@@ -1,5 +1,4 @@
 import scipy.special
-import math
 
 factorialList = [1]
 
@@ -34,7 +33,6 @@ def dynamicBessel(x,N):
     # It's important to pick N large enough so that the expression
     # sum_(p=0)^(infinity) [(((-1)**p)/(p!(n+p)!))(x/2)**(n+2p)]
     # becomes negligible for n >= N.
-    J[N] = 0
     J[N-1] = 1
     for i in range(1,N)[::-1]:
         intermediate = (2*(i)/x)*J[i] - J[i+1]
