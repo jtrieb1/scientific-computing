@@ -47,7 +47,7 @@ def  relErr(x, n, callback):
         as the callback. """
     correctValue = scipy.special.jv(0,x)
     estimate = callback(x,n)
-    return abs(correctValue - estimate)/abs(estimate)
+    return abs(correctValue - estimate)/abs(correctValue)
 
 def prettyErrorTable(xVals, nVals, method):
     text = "x\tN| " + " | ".join([str(n) for n in nVals]) + "\n"
