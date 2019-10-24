@@ -1,5 +1,6 @@
 import scipy.special
 import math
+from tableprinter.tableprinter import prettyTable
 
 factorialList = [1]
 
@@ -32,7 +33,7 @@ def dynamicBessel(x,N):
      same relative error bound. """
     J = [0]*(N+1)
     # It's important to pick N large enough so that the expression
-    # sum_(p=0)^(infinity) [(((-1)**p)/(p!(n+p)!))(x/2)**(n+2p)]
+    # $$sum_(p=0)^(infinity) [(((-1)**p)/(p!(n+p)!))(x/2)**(n+2p)]$$
     # becomes negligible for n >= N.
     J[N] = 0
     J[N-1] = 1
@@ -51,13 +52,19 @@ def  relErr(x, n, callback):
     estimate = callback(x,n)
     return abs(correctValue - estimate)/abs(estimate)
 
+def calculateErrorTable(xvals, nvals, method):
+    """ This looks like a complicated one-line expression, but really all it does
+        is construct a 2-dimensional matrix which has rows where the first element
+        is the value of x we are testing and the remaining elements are the relative
+        errors for those tests at various values of N, i.e. just a table of values."""
+    return [[x] + [relErr(x,n,method) for n in nvals] for x in xvals]
+
 def prettyErrorTable(xVals, nVals, method):
-    text = "x\tN| " + " | ".join([str(n) for n in nVals]) + "\n"
-    text += "==" * len(text) + "\n"
-    for x in xVals:
-        text += str(x) + " \t | " + " | ".join([str(relErr(x,n,method)) for n in nVals]) + "\n"
-    return text
+    tableMatrix = calculateErrorTable(xVals, nVals, method)
+    return prettyTable(tableMatrix, nVals, "x", "N")
+
 print("Table of relative errors for the truncated Bessel function:")
 print(prettyErrorTable([1,5,10,20], [10,25,50,75,100], truncatedBessel))
+print()
 print("Table of relative errors for the recursive Bessel function:")
 print(prettyErrorTable([1,5,10,20], [10,25,50,75,100], dynamicBessel))
