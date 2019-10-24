@@ -25,6 +25,16 @@ def truncatedBessel(x,M):
         value += innerCoeff * variable
     return value
 
+def generalTruncatedBessel(x,n,M):
+    """ Calculates the Bessel function of order n at the point x, using
+        the infinite series truncated at M terms. """
+    value = 0
+    for p in range(M+1):
+        innerCoeff = ((-1)**p)/(factorial(p)*factorial(n+p))
+        variable = (x/2)**(n + 2*p)
+        value += innerCoeff * variable
+    return value
+
 def dynamicBessel(x,N):
     """ Calculates the Bessel function of order zero at the point x,
      using the recursion formula and taking the appropriate corrective
@@ -60,9 +70,3 @@ def calculateErrorTable(xvals, nvals, method):
 def prettyErrorTable(xVals, nVals, method):
     tableMatrix = calculateErrorTable(xVals, nVals, method)
     return prettyTable(tableMatrix, nVals, "x", "N")
-
-print("Table of relative errors for the truncated Bessel function:")
-print(prettyErrorTable([1,5,10,20], [10,25,50,75,100], truncatedBessel))
-print()
-print("Table of relative errors for the recursive Bessel function:")
-print(prettyErrorTable([1,5,10,20], [10,25,50,75,100], dynamicBessel))
