@@ -1,5 +1,4 @@
 import scipy.special
-import math
 from tableprinter.tableprinter import prettyTable
 
 factorialList = [1]
@@ -35,7 +34,6 @@ def dynamicBessel(x,N):
     # It's important to pick N large enough so that the expression
     # $$sum_(p=0)^(infinity) [(((-1)**p)/(p!(n+p)!))(x/2)**(n+2p)]$$
     # becomes negligible for n >= N.
-    J[N] = 0
     J[N-1] = 1
     for i in range(1,N)[::-1]:
         intermediate = (2*(i)/x)*J[i] - J[i+1]
@@ -50,7 +48,7 @@ def  relErr(x, n, callback):
         as the callback. """
     correctValue = scipy.special.jv(0,x)
     estimate = callback(x,n)
-    return abs(correctValue - estimate)/abs(estimate)
+    return abs(correctValue - estimate)/abs(correctValue)
 
 def calculateErrorTable(xvals, nvals, method):
     """ This looks like a complicated one-line expression, but really all it does
