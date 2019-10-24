@@ -1,6 +1,3 @@
-import scipy.special
-from tableprinter.tableprinter import prettyTable
-
 factorialList = [1]
 
 def factorial(n):
@@ -51,22 +48,3 @@ def dynamicBessel(x,N):
     lambdaArray = [J[0]] + [2*x for x in J[2::2]]
     correctiveFactor = sum(lambdaArray)
     return J[0] / correctiveFactor
-
-def  relErr(x, n, callback):
-    """ Returns the relative error for the calculation of the
-        Bessel function of order zero at the point x using the function passed
-        as the callback. """
-    correctValue = scipy.special.jv(0,x)
-    estimate = callback(x,n)
-    return abs(correctValue - estimate)/abs(correctValue)
-
-def calculateErrorTable(xvals, nvals, method):
-    """ This looks like a complicated one-line expression, but really all it does
-        is construct a 2-dimensional matrix which has rows where the first element
-        is the value of x we are testing and the remaining elements are the relative
-        errors for those tests at various values of N, i.e. just a table of values."""
-    return [[x] + [relErr(x,n,method) for n in nvals] for x in xvals]
-
-def prettyErrorTable(xVals, nVals, method):
-    tableMatrix = calculateErrorTable(xVals, nVals, method)
-    return prettyTable(tableMatrix, nVals, "x", "N")

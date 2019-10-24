@@ -4,7 +4,6 @@ def getMaxLength(matrix):
 def prettyTable(matrix, headers, xlabel, ylabel, sep="|", padding=1, hRule=True):
     assert(len(headers) + 1 >= max([len(row) for row in matrix])), "Not enough headers for data!"
     maxSpaceRequiredPerCell = getMaxLength(matrix) + padding
-    axesFormatSpacing = maxSpaceRequiredPerCell
     yAxis = "{0:>{space}}".format(ylabel, space=maxSpaceRequiredPerCell) + sep
     xAxis = sep.join(["{0:^{space}}".format(xlabel, space=maxSpaceRequiredPerCell)] + [" "*maxSpaceRequiredPerCell]*len(headers)) + "\n"
     formattedHeaders = yAxis + sep.join(["{0:^{space}}".format(x, space=maxSpaceRequiredPerCell) for x in headers]) + "\n"

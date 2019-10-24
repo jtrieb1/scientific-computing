@@ -1,4 +1,4 @@
-from bessel import truncatedBessel, dynamicBessel, prettyErrorTable
+from bessel import truncatedBessel, dynamicBessel
 from bisection import bisectionMethod
 from secant import secantMethod
 from newton import newtonsMethod
@@ -16,6 +16,29 @@ nVals = [10,25,50,75,100]
 intervals = [[1,3],[4,6],[8,10]]
 newtonGuesses = [3,6,10]
 epsilons = [10**(-x) for x in range(6,11)]
+
+## BESSEL FUNCTION ERROR CALCULATIONS
+
+def  relErr(x, n, callback):
+    """ Returns the relative error for the calculation of the
+        Bessel function of order zero at the point x using the function passed
+        as the callback. """
+    correctValue = jv(0,x)
+    estimate = callback(x,n)
+    return abs(correctValue - estimate)/abs(correctValue)
+
+def calculateErrorTable(xvals, nvals, method):
+    """ This looks like a complicated one-line expression, but really all it does
+        is construct a 2-dimensional matrix which has rows where the first element
+        is the value of x we are testing and the remaining elements are the relative
+        errors for those tests at various values of N, i.e. just a table of values."""
+    return [[x] + [relErr(x,n,method) for n in nvals] for x in xvals]
+
+def prettyErrorTable(xVals, nVals, method):
+    tableMatrix = calculateErrorTable(xVals, nVals, method)
+    return prettyTable(tableMatrix, nVals, "x", "N")
+
+## ROOT FINDING METHODS
 
 def getResultTable(method, intervals, epsilons):
     besselZero = lambda x: jv(0,x)
