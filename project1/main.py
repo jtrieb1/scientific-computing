@@ -5,6 +5,9 @@ from newton import newtonsMethod
 from tableprinter.tableprinter import prettyTable
 from scipy.special import jv
 import sys
+import os
+import numpy as np
+import matplotlib.pyplot as plt
 
 #CONSTANTS
 ## Our good friend delta:
@@ -49,6 +52,11 @@ def getResultTable(method, intervals, epsilons):
                ["{0:.13}, {1} iters.".format(specifiedMethod(domain,ep)[0], specifiedMethod(domain,ep)[2]) for ep in epsilons]
            for domain in intervals]
 
+def getResultTableForPlot(method, intervals, epsilons):
+    besselZero = lambda x: jv(0,x)
+    specifiedMethod = lambda x,y: method(besselZero, x, 200, y, delta)
+    return [[specifiedMethod(domain, ep)[2] for ep in epsilons] for domain in intervals]
+
 def generatePrettyTable(method, intervals, epsilons):
     return prettyTable(getResultTable(method, intervals, epsilons), epsilons, "[a,b]", "eps.")
 
@@ -58,6 +66,12 @@ def getNewtonTable(guesses, epsilons):
     besselPrime  = lambda x: -jv(1,x)
     boundNewton = lambda x,y: newtonsMethod(besselZero, besselPrime, x, 200, y, delta)
     return [[str(guess)] + ["{0:.13}, {1} iters.".format(boundNewton(guess, ep)[0],boundNewton(guess,ep)[2]) for ep in epsilons] for guess in guesses]
+
+def getNewtonTableForPlot(guesses, epsilons):
+    besselZero = lambda x: jv(0,x)
+    besselPrime  = lambda x: -jv(1,x)
+    boundNewton = lambda x,y: newtonsMethod(besselZero, besselPrime, x, 200, y, delta)
+    return [[boundNewton(guess, ep)[2] for ep in epsilons] for guess in guesses]
 
 def generateNewtonTable(guesses, epsilons):
     return prettyTable(getNewtonTable(guesses, epsilons), epsilons, "Guess", "eps.")
@@ -78,10 +92,74 @@ def returnTables():
     print("Newton's method results for J_0:")
     print(generateNewtonTable(newtonGuesses, epsilons))
 
+def exportFigures(filepath):
+    filename, extension = os.path.splitext(filepath)
+    truncatedError = calculateErrorTable(xVals, nVals, truncatedBessel)
+    dynamicError = calculateErrorTable(xVals, nVals, dynamicBessel)
+    combined = [[truncatedError[n][1:]] + [dynamicError[n][1:]] for n in range(4)]
+    plt.figure()
+
+    for k in range(4):
+        plt.subplot(221 + k)
+        plt.plot(nVals, combined[k][0], "b")
+        plt.plot(nVals, combined[k][1], "r")
+        plt.title("$x = {}$".format(xVals[k]))
+        plt.xlabel("Number of terms")
+        plt.ylabel("Relative error")
+        plt.yscale('log')
+
+    plt.subplots_adjust(wspace = 0.5, hspace=0.7)
+
+    plt.savefig(filename + "_bessel" + extension)
+
+    plt.close()
+
+    bisectionPlotTable = getResultTableForPlot(bisectionMethod, intervals, epsilons)
+    secantPlotTable = getResultTableForPlot(secantMethod, intervals, epsilons)
+    tables = [bisectionPlotTable, secantPlotTable]
+    plt.figure()
+
+    for k in range(len(intervals)):
+        plt.subplot(221 + k)
+        plt.plot(epsilons, tables[0][k], "b")
+        plt.plot(epsilons, tables[1][k], "r")
+        plt.title("Interval: " + str(intervals[k]))
+        plt.xlabel("Epsilon")
+        plt.ylabel("Iterations")
+        plt.xscale('log')
+
+    plt.subplots_adjust(wspace=0.6, hspace=0.7)
+    plt.savefig(filename + "_bisection_secant" + extension)
+    plt.close()
+
+    newtonTable = getNewtonTableForPlot(newtonGuesses, epsilons)
+    plt.figure()
+    for k in range(len(newtonGuesses)):
+        plt.subplot(221 + k)
+        plt.plot(epsilons, newtonTable[k], "g")
+        plt.title("Initial guess: " + str(newtonGuesses[k]))
+        plt.xlabel("Epsilon")
+        plt.ylabel("Iterations")
+        plt.xscale("log")
+
+    plt.subplots_adjust(wspace=0.6, hspace=0.7)
+    plt.savefig(filename + "_newton" + extension)
+    plt.close()
+
+def usage():
+    print("""
+    Usage: python main.py [filepath.png]\n
+    Add a filepath to export plots to that location.""")
+
 def main():
-    """ I'm having this just print the tables for now, but I'm leaving myself the option to
-        add functionality in the future. """
-    returnTables()
+    """ Arguments choose whether to print tables or export plots. """
+    if len(sys.argv) == 1:
+        returnTables()
+    elif len(sys.argv) == 2:
+        exportFigures(sys.argv[1])
+    else:
+        usage()
+
 
 if __name__ == '__main__':
     main()
