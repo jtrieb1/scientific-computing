@@ -48,5 +48,6 @@ def main():
   ax.plot_surface(X,Y,Z, rstride=1, cstride=1, cmap="viridis", edgecolor="none")
   ax.set_title("Interpolation map")
   plt.show()  
+  
 
 main()
