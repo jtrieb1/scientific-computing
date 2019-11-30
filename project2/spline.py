@@ -1,4 +1,6 @@
 def zCalc(method, nodes):
+  """This method solves the tridiagonal matrix associated to a given 
+  function to yield the necessary z values for building the spline."""
   n = len(nodes) - 1
   yVals = list(map(method, nodes))
   h = [0]*(n)
@@ -21,6 +23,8 @@ def zCalc(method, nodes):
   return z, h, yVals
 
 def spline(method, nodes):
+  """This method actually builds the spline and returns a callable version of it,
+  which will associate the correct values of x to their specific sub-function."""
   z, h, y = zCalc(method,nodes)
   A = [0]*len(nodes)
   B = [0]*len(nodes)

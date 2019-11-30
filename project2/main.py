@@ -50,14 +50,14 @@ def chartGen1(save, path=""):
   lines, labels = [sum(lol,[]) for lol in zip(*lines_labels)]
   fig.legend(lines, labels, title="Intervals", loc="center")
   if save:
-    plt.savefig(path + "-Equi.jpg")
+    plt.savefig(path + "-Equi.png")
   else:
     plt.show()
 
   fig=plt.figure()
   for i in range(rows):
     plt.subplot(base + 2*i)
-    plt.title("Cosine-based Node Interpolation")
+    plt.title("Chebyshev Node Interpolation")
     approxList = []
     plt.plot(x1, funcList[i](x1), "k")
     for n in nVals:
@@ -73,7 +73,7 @@ def chartGen1(save, path=""):
   lines, labels = [sum(lol,[]) for lol in zip(*lines_labels)]
   fig.legend(lines, labels, title="Intervals", loc="center")
   if save:
-    plt.savefig(path + "-Cos.jpg")
+    plt.savefig(path + "-Chebyshev.png")
   else:
     plt.show()
 
@@ -98,7 +98,7 @@ def chartGen1(save, path=""):
   lines, labels = [sum(lol,[]) for lol in zip(*lines_labels)]
   fig.legend(lines, labels, title="Intervals", loc="center")
   if save:
-    plt.savefig(path + "-Spline.jpg")
+    plt.savefig(path + "-Spline.png")
   else:
     plt.show()
 
